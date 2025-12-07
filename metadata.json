@@ -1,0 +1,5 @@
+{
+  "name": "VozBook AI",
+  "description": "An intelligent audiobook player and text-to-speech converter application featuring a modern dark-mode interface, library management, and voice customization.",
+  "requestFramePermissions": []
+}
