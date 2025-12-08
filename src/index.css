@@ -3,77 +3,91 @@
 @tailwind utilities;
 
 /* Mobile App Optimization & Resets */
+:root {
+  --safe-area-top: env(safe-area-inset-top);
+  --safe-area-bottom: env(safe-area-inset-bottom);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* Prevent tap highlight on mobile */
   -webkit-tap-highlight-color: transparent;
 }
 
 html {
-  /* Prevent 'pull-to-refresh' or overscroll bounce effects */
   overscroll-behavior: none;
-  /* Fix text inflation on mobile */
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   width: 100%;
   height: 100%;
-  /* Use dynamic viewport height for mobile browsers */
   min-height: 100dvh; 
   overflow-x: hidden;
   background-color: #0C1115;
   touch-action: manipulation;
-  overscroll-behavior: none;
-  
-  /* Disable text selection generally for app-like feel */
+  overscroll-behavior-y: none;
   user-select: none;
   -webkit-user-select: none;
-  
-  /* Support for iPhone Notch/Home Bar */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: var(--safe-area-top);
+  padding-bottom: var(--safe-area-bottom);
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 #root {
   width: 100%;
   height: 100%;
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
-:root {
-  font-size: 16px;
-}
-
-/* Allow selection in inputs and text areas */
+/* Allow selection in inputs */
 input, textarea, [contenteditable] {
   user-select: text;
   -webkit-user-select: text;
 }
 
-img, video, canvas {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  /* Prevent dragging images */
+img {
   -webkit-user-drag: none;
 }
 
-/* Existing Styles */
+/* --- UI Utilities --- */
+
 .material-symbols-outlined {
   font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
 }
 
 .glass-panel {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Hide scrollbar for clean horizontal scrolling */
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -82,31 +96,40 @@ img, video, canvas {
   scrollbar-width: none;
 }
 
-/* Custom Range Slider */
+/* Range Slider */
 input[type=range] {
   -webkit-appearance: none;
   background: transparent;
 }
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 16px;
-  width: 16px;
+  height: 18px;
+  width: 18px;
   border-radius: 50%;
   background: #3AB8FF;
   cursor: pointer;
-  margin-top: -6px; 
-  box-shadow: 0 0 10px rgba(58, 184, 255, 0.5);
+  margin-top: -7px; 
+  box-shadow: 0 0 15px rgba(58, 184, 255, 0.6);
+  border: 2px solid #fff;
 }
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 4px;
   cursor: pointer;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.15);
   border-radius: 10px;
 }
 
-/* Helper for mask gradient */
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
 .mask-gradient {
-  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
 }

@@ -19,10 +19,9 @@ const Player: React.FC = () => {
   // Sync context if URL changes
   useEffect(() => {
       if (displayBook && currentBook?.id !== displayBook.id) {
-          // Optional: Auto-play when entering page
           // playBook(displayBook); 
       }
-      setImgError(false); // Reset error state on book change
+      setImgError(false); 
   }, [id, displayBook]);
 
   const chapters = [15, 35, 60, 85];
@@ -47,193 +46,173 @@ const Player: React.FC = () => {
   const isCurrentPlaying = isPlaying && currentBook?.id === displayBook.id;
 
   return (
-    <div className="relative flex h-[100dvh] w-full flex-col bg-background-dark font-display text-white overflow-hidden">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/40 z-10"></div>
+    <div className="relative flex h-[100dvh] w-full flex-col bg-[#0C1115] font-display text-white overflow-hidden">
+      
+      {/* Dynamic Background Blur */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 bg-[#0C1115]/60 z-10 backdrop-blur-3xl"></div>
           {imgError ? (
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-900/20 z-0"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-purple-900/20 z-0"></div>
           ) : (
             <div 
-                className="absolute inset-0 opacity-40 blur-[100px] scale-150 transition-opacity duration-700"
+                className="absolute inset-0 opacity-30 blur-[120px] scale-125 transition-all duration-1000 ease-in-out"
                 style={{ 
                     backgroundImage: `url("${displayBook.cover}")`,
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
-                    opacity: showLyrics ? 0.2 : 0.4
                 }}
             ></div>
           )}
       </div>
 
-      {/* Top Bar */}
-      <div className="relative z-10 flex items-center justify-between p-6 pt-8">
-        <button 
-            onClick={() => navigate(-1)}
-            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full glass-panel hover:bg-white/10 active:scale-95 transition-all"
-        >
-          <span className="material-symbols-outlined text-2xl">keyboard_arrow_down</span>
-        </button>
+      {/* Main Container - Centered Max Width */}
+      <div className="relative z-10 flex flex-col h-full w-full max-w-md mx-auto md:max-w-2xl lg:max-w-4xl px-6 md:px-12 py-6 justify-between">
         
-        <div className="flex flex-col items-center">
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/60 mb-1">Tocando de</div>
-            <div className="text-xs font-bold text-primary">Sua Biblioteca</div>
+        {/* Header */}
+        <div className="flex items-center justify-between shrink-0">
+            <button 
+                onClick={() => navigate(-1)}
+                className="flex h-12 w-12 items-center justify-center rounded-full glass-panel text-white/80 hover:bg-white/10 active:scale-95 transition-all"
+            >
+            <span className="material-symbols-outlined text-2xl">keyboard_arrow_down</span>
+            </button>
+            
+            <div className="flex flex-col items-center">
+                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mb-1">Tocando de</div>
+                <div className="text-xs font-bold text-primary tracking-wide">Sua Biblioteca</div>
+            </div>
+
+            <button className="flex h-12 w-12 items-center justify-center rounded-full glass-panel text-white/80 hover:bg-white/10 active:scale-95 transition-all">
+            <span className="material-symbols-outlined text-xl">more_vert</span>
+            </button>
         </div>
 
-        <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full glass-panel hover:bg-white/10 active:scale-95 transition-all">
-          <span className="material-symbols-outlined text-xl">more_vert</span>
-        </button>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="relative z-10 flex-1 flex flex-col px-8 min-h-0">
-        
-        <div className="flex-1 flex items-center justify-center py-4 overflow-hidden">
+        {/* Content: Art or Text */}
+        <div className="flex-1 flex flex-col items-center justify-center min-h-0 py-6 md:py-10">
             {!showLyrics ? (
-                // --- VIEW 1: ALBUM ART & VISUALIZER ---
-                <div className={`relative w-full max-w-[340px] aspect-square rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] ring-1 ring-white/10 transition-all duration-700 ease-out animate-[fadeIn_0.5s_ease-out] bg-[#1a232d] ${isCurrentPlaying ? 'scale-100' : 'scale-95'}`}>
+                // --- ARTWORK ---
+                <div className={`relative w-full aspect-square max-h-[40vh] md:max-h-[50vh] max-w-[40vh] md:max-w-[50vh] rounded-[2rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] ring-1 ring-white/10 transition-all duration-700 ease-out bg-[#1a232d] ${isCurrentPlaying ? 'scale-100' : 'scale-[0.92] opacity-90'}`}>
                     {imgError ? (
-                        <div className="h-full w-full rounded-3xl bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
+                        <div className="h-full w-full rounded-[2rem] bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
                              <span className="material-symbols-outlined text-white/10 text-8xl">album</span>
                         </div>
                     ) : (
                         <img 
                             src={displayBook.cover} 
-                            className="h-full w-full rounded-3xl object-cover" 
+                            className="h-full w-full rounded-[2rem] object-cover" 
                             alt="Cover" 
                             onError={() => setImgError(true)}
                         />
                     )}
-                    
-                    {/* Visualizer Overlay */}
-                    {isCurrentPlaying && (
-                        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent rounded-b-3xl flex items-end justify-center gap-1.5 pb-6 px-8">
-                            {[...Array(16)].map((_, i) => (
-                                <div 
-                                    key={i} 
-                                    className="w-1.5 bg-primary/90 rounded-full animate-equalizer" 
-                                    style={{ 
-                                        animationDuration: `${0.8 + Math.random() * 0.6}s`,
-                                        animationDelay: `${Math.random() * -0.5}s`,
-                                        height: `${20 + Math.random() * 40}%`
-                                    }}
-                                ></div>
-                            ))}
-                        </div>
-                    )}
                 </div>
             ) : (
-                // --- VIEW 2: LYRICS / READING MODE ---
-                <div className="h-full w-full max-w-lg overflow-y-auto no-scrollbar mask-gradient animate-[fadeIn_0.5s_ease-out]">
-                    <div className="space-y-6 py-4">
+                // --- LYRICS ---
+                <div className="h-full w-full max-w-xl overflow-y-auto no-scrollbar mask-gradient animate-fade-in px-2">
+                    <div className="space-y-8 py-8">
                         {bookContent.map((paragraph, index) => (
                             <p 
                                 key={index} 
-                                className={`text-xl md:text-2xl font-medium leading-relaxed transition-all duration-500 cursor-pointer ${
-                                    index === 1 // Simulate active paragraph
+                                className={`text-xl md:text-3xl font-medium leading-relaxed transition-all duration-500 cursor-pointer ${
+                                    index === 1 
                                     ? 'text-white scale-100 opacity-100' 
-                                    : 'text-white/40 hover:text-white/60 scale-[0.98]'
+                                    : 'text-white/30 hover:text-white/60 scale-[0.98]'
                                 }`}
                             >
                                 {paragraph}
                             </p>
                         ))}
-                        <div className="h-20"></div> {/* Spacer */}
+                        <div className="h-32"></div>
                     </div>
                 </div>
             )}
         </div>
 
-        {/* Info Area */}
-        <div className={`flex items-end justify-between mb-6 transition-opacity duration-300 ${showLyrics ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100'}`}>
-            <div className="flex-1 min-w-0 mr-6">
-                <h1 className="text-2xl md:text-3xl font-bold leading-tight mb-2 truncate text-white text-shadow-sm">{displayBook.title}</h1>
-                <p className="text-primary text-base md:text-lg font-medium truncate">{displayBook.author}</p>
+        {/* Controls Section */}
+        <div className="flex flex-col gap-6 md:gap-8 shrink-0 pb-safe-area-bottom">
+            
+            {/* Title Info */}
+            <div className={`flex items-end justify-between transition-opacity duration-300 ${showLyrics ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
+                <div className="flex-1 min-w-0 mr-6">
+                    <h1 className="text-2xl md:text-4xl font-bold leading-tight mb-1 truncate text-white">{displayBook.title}</h1>
+                    <p className="text-primary text-base md:text-lg font-medium truncate opacity-90">{displayBook.author}</p>
+                </div>
+                <button className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-panel text-white/50 hover:text-red-500 hover:bg-white/10 transition-colors active:scale-95">
+                    <span className="material-symbols-outlined text-2xl fill-current">favorite</span>
+                </button>
             </div>
-            <button className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-panel text-white/50 hover:text-red-500 hover:bg-white/10 transition-colors">
-                <span className="material-symbols-outlined text-2xl fill-current">favorite</span>
-            </button>
-        </div>
 
-        {/* Scrubber */}
-        <div className="mb-6 group relative select-none">
-            <div className="relative h-2 w-full rounded-full bg-white/10 cursor-pointer">
-                <div className="absolute inset-0 rounded-full bg-white/10"></div>
-                {chapters.map((pos) => (
-                    <div key={pos} className="absolute top-0 bottom-0 w-[2px] bg-black/50 z-10" style={{ left: `${pos}%` }} />
-                ))}
-                <div className="absolute h-full w-[35%] rounded-full bg-gradient-premium shadow-glow-sm group-hover:brightness-110"></div>
-                <div className="absolute left-[35%] top-1/2 -translate-y-1/2 h-5 w-5 rounded-full bg-white shadow-glow opacity-0 group-hover:opacity-100 transition-opacity ring-4 ring-primary/30 z-20"></div>
+            {/* Scrubber */}
+            <div className="group relative select-none w-full">
+                <div className="relative h-2 w-full rounded-full bg-white/10 cursor-pointer overflow-hidden md:h-2.5">
+                    {chapters.map((pos) => (
+                        <div key={pos} className="absolute top-0 bottom-0 w-[1px] bg-white/20 z-10" style={{ left: `${pos}%` }} />
+                    ))}
+                    <div className="absolute h-full w-[35%] rounded-full bg-primary shadow-[0_0_15px_#3AB8FF]"></div>
+                </div>
+                <div className="flex justify-between mt-2 text-xs font-bold text-white/40 font-mono tracking-wide">
+                    <span>12:45</span>
+                    <span>-45:10</span>
+                </div>
             </div>
-            <div className="flex justify-between mt-3 text-xs font-bold text-white/40 font-mono tracking-wide">
-                <span>12:45</span>
-                <span>-{displayBook.duration}</span>
+
+            {/* Playback Controls */}
+            <div className="flex items-center justify-between px-2 md:px-12">
+                <button className="text-white/40 hover:text-white transition-colors p-2 active:scale-95">
+                    <span className="material-symbols-outlined text-2xl md:text-3xl">shuffle</span>
+                </button>
+                <button onClick={prevTrack} className="text-white hover:text-primary transition-colors p-2 active:scale-90">
+                    <span className="material-symbols-outlined text-4xl md:text-5xl font-light">skip_previous</span>
+                </button>
+                <button 
+                    onClick={handlePlayToggle}
+                    className="flex h-20 w-20 md:h-24 md:w-24 items-center justify-center rounded-full bg-white text-black shadow-glow hover:scale-105 active:scale-95 transition-all"
+                >
+                    <span className="material-symbols-outlined text-5xl md:text-6xl fill text-primary">{isCurrentPlaying ? 'pause' : 'play_arrow'}</span>
+                </button>
+                <button onClick={nextTrack} className="text-white hover:text-primary transition-colors p-2 active:scale-90">
+                    <span className="material-symbols-outlined text-4xl md:text-5xl font-light">skip_next</span>
+                </button>
+                <button className="text-white/40 hover:text-white transition-colors p-2 active:scale-95">
+                    <span className="material-symbols-outlined text-2xl md:text-3xl">bedtime</span>
+                </button>
+            </div>
+
+            {/* Bottom Tools */}
+            <div className="flex items-center justify-between pt-2">
+                 <button className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/10 px-4 py-2 rounded-full border border-primary/20 hover:bg-primary/20 transition-colors">
+                     <span className="material-symbols-outlined text-sm">speed</span>
+                     1.0x
+                 </button>
+
+                 <div className={`flex items-center gap-3 w-1/2 max-w-[200px] ${showLyrics ? 'hidden md:flex' : 'hidden sm:flex'}`}>
+                     <span className="material-symbols-outlined text-xs text-white/40">volume_down</span>
+                     <input 
+                        type="range" 
+                        min="0" max="100" 
+                        value={volume} 
+                        onChange={(e) => setVolume(Number(e.target.value))}
+                        className="flex-1 h-1"
+                     />
+                     <span className="material-symbols-outlined text-xs text-white/40">volume_up</span>
+                 </div>
+
+                 <button 
+                    onClick={() => setShowLyrics(!showLyrics)}
+                    className={`flex items-center gap-2 text-xs font-bold transition-colors px-4 py-2 rounded-full border ${
+                        showLyrics 
+                        ? 'text-white bg-white/20 border-white/30' 
+                        : 'text-white/60 hover:text-white border-transparent hover:bg-white/10'
+                    }`}
+                >
+                     <span className="material-symbols-outlined text-lg">
+                        {showLyrics ? 'image' : 'description'}
+                     </span>
+                     {showLyrics ? 'Capa' : 'Texto'}
+                 </button>
             </div>
         </div>
 
-        {/* Main Controls */}
-        <div className="flex items-center justify-between mb-8">
-            <button className="text-white/40 hover:text-white transition-colors p-2">
-                <span className="material-symbols-outlined text-2xl">shuffle</span>
-            </button>
-            <button onClick={prevTrack} className="text-white hover:text-primary transition-colors hover:scale-110 active:scale-95">
-                <span className="material-symbols-outlined text-4xl font-light">skip_previous</span>
-            </button>
-            <button 
-                onClick={handlePlayToggle}
-                className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-premium text-white shadow-glow hover:scale-105 active:scale-95 transition-all"
-            >
-                <span className="material-symbols-outlined text-5xl fill">{isCurrentPlaying ? 'pause' : 'play_arrow'}</span>
-            </button>
-            <button onClick={nextTrack} className="text-white hover:text-primary transition-colors hover:scale-110 active:scale-95">
-                <span className="material-symbols-outlined text-4xl font-light">skip_next</span>
-            </button>
-            <button className="text-white/40 hover:text-white transition-colors p-2">
-                <span className="material-symbols-outlined text-2xl">bedtime</span>
-            </button>
-        </div>
-
-        {/* Bottom Tools */}
-        <div className="flex items-center justify-between px-2 pb-[calc(2rem+env(safe-area-inset-bottom))]">
-             <button className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
-                 <span className="material-symbols-outlined text-sm">speed</span>
-                 1.0x
-             </button>
-
-             <div className={`flex items-center gap-3 w-1/2 ${showLyrics ? 'hidden md:flex' : 'flex'}`}>
-                 <span className="material-symbols-outlined text-xs text-white/40">volume_down</span>
-                 <input 
-                    type="range" 
-                    min="0" max="100" 
-                    value={volume} 
-                    onChange={(e) => setVolume(Number(e.target.value))}
-                    className="flex-1"
-                 />
-                 <span className="material-symbols-outlined text-xs text-white/40">volume_up</span>
-             </div>
-
-             <button 
-                onClick={() => setShowLyrics(!showLyrics)}
-                className={`flex items-center gap-2 text-xs font-bold transition-colors px-3 py-1.5 rounded-lg border ${
-                    showLyrics 
-                    ? 'text-white bg-white/20 border-white/30' 
-                    : 'text-white/60 hover:text-white border-transparent hover:bg-white/10'
-                }`}
-            >
-                 <span className="material-symbols-outlined text-lg">
-                    {showLyrics ? 'image' : 'description'}
-                 </span>
-                 {showLyrics ? 'Capa' : 'Texto'}
-             </button>
-        </div>
       </div>
-      
-      <style>{`
-        .mask-gradient {
-            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-        }
-      `}</style>
     </div>
   );
 };

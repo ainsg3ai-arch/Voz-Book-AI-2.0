@@ -35,7 +35,7 @@ const Preview: React.FC = () => {
   }, [filePath]);
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark font-display text-white overflow-hidden">
+    <div className="relative flex min-h-[100dvh] w-full flex-col bg-background-dark font-display text-white overflow-hidden">
       {/* Search Header */}
       <header className="sticky top-0 z-20 bg-background-dark/80 backdrop-blur-xl px-4 pt-4 pb-4 border-b border-white/5">
         <div className="flex items-center justify-between gap-4">
@@ -120,7 +120,7 @@ const Preview: React.FC = () => {
       </main>
 
       {/* FAB to Record/Voice Config */}
-      <div className="fixed bottom-8 right-6 z-20">
+      <div className="fixed bottom-8 right-6 z-20 mb-[env(safe-area-inset-bottom)]">
         <button 
           onClick={() => navigate('/voice-config', { state: { filePath, fileName: fileNameParam } })}
           className="group flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-premium shadow-glow hover:scale-110 active:scale-95 transition-all"
