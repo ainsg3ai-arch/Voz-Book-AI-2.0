@@ -6,64 +6,44 @@ const Welcome: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative flex h-[100dvh] w-full flex-col bg-[#0C1115] font-display overflow-hidden selection:bg-primary selection:text-white">
+    <div 
+        className="relative flex h-[100dvh] w-full flex-col items-center justify-center bg-[#0d1117] font-display overflow-hidden selection:bg-primary selection:text-[#0d1117]"
+        onClick={() => navigate('/home')} // Click anywhere to enter
+    >
       
-      {/* Background Animated Gradients (Aurora Effect) */}
-      <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[60%] bg-blue-600/10 blur-[150px] rounded-full animate-pulse-slow pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[60%] bg-purple-600/10 blur-[150px] rounded-full animate-pulse-slow pointer-events-none" style={{ animationDelay: '1s' }}></div>
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-gradient-glow pointer-events-none"></div>
+      <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[60%] bg-[#00f2fe]/5 blur-[150px] rounded-full animate-pulse-slow pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[60%] bg-[#6a5af9]/10 blur-[150px] rounded-full animate-pulse-slow pointer-events-none" style={{ animationDelay: '2s' }}></div>
 
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 w-full max-w-md mx-auto">
+      <main className="relative z-10 flex flex-col items-center justify-center animate-[fadeIn_0.8s_ease-out]">
         
-        {/* Animated Logo Construction */}
-        <div className="relative mb-12 group cursor-default">
-            {/* Glow behind */}
-            <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full scale-110 group-hover:scale-125 transition-transform duration-700 opacity-60"></div>
-            
-            {/* Main Logo Container */}
-            <div className="relative flex h-36 w-36 items-center justify-center rounded-[2.5rem] bg-gradient-to-br from-[#151e26] to-[#0a0e12] border border-white/10 shadow-2xl ring-1 ring-white/5 group-hover:-translate-y-2 transition-transform duration-500">
-                <Logo className="h-20 w-20" />
-            </div>
+        {/* Logo Construction */}
+        <div className="relative mb-10 group cursor-pointer">
+            <div className="absolute inset-0 bg-gradient-premium blur-[40px] opacity-20 rounded-full scale-150 animate-pulse-slow"></div>
+            <Logo className="h-28 w-28 md:h-36 md:w-36 drop-shadow-2xl" />
         </div>
 
-        {/* Typography */}
-        <div className="text-center space-y-5 animate-[slideUp_0.5s_ease-out]">
-            <h1 className="text-5xl font-bold tracking-tight text-white leading-tight">
-                VozBook <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">AI</span>
-            </h1>
-            <p className="text-lg text-slate-400 leading-relaxed max-w-xs mx-auto">
-                Transforme qualquer texto em uma experiência de áudio imersiva com vozes neurais ultra-realistas.
-            </p>
-        </div>
-
-        {/* Feature Pills */}
-        <div className="mt-10 flex flex-wrap justify-center gap-3 opacity-80 animate-[fadeIn_1s_ease-out]">
-            <span className="px-4 py-1.5 rounded-full border border-white/10 text-[11px] font-bold text-white uppercase tracking-wider bg-white/5 backdrop-blur-md">PDF & ePUB</span>
-            <span className="px-4 py-1.5 rounded-full border border-white/10 text-[11px] font-bold text-white uppercase tracking-wider bg-white/5 backdrop-blur-md">Neural TTS</span>
-            <span className="px-4 py-1.5 rounded-full border border-white/10 text-[11px] font-bold text-white uppercase tracking-wider bg-white/5 backdrop-blur-md">Offline</span>
-        </div>
+        {/* Brand Name */}
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-[0.05em] text-white mb-2 relative">
+            SONARA
+            <span className="absolute -top-1 -right-4 h-2 w-2 rounded-full bg-primary animate-ping"></span>
+        </h1>
+        
+        <p className="text-sm md:text-base text-white/40 font-medium tracking-[0.2em] uppercase mt-4">
+            The Future of Audio
+        </p>
 
       </main>
 
-      {/* Bottom Actions */}
-      <div className="relative z-10 w-full p-8 pb-[calc(2rem+env(safe-area-inset-bottom))] animate-[slideUp_0.7s_ease-out] max-w-md mx-auto">
-        <button 
-            onClick={() => navigate('/home')}
-            className="group relative w-full overflow-hidden rounded-2xl bg-white py-5 font-bold text-[#0C1115] shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] transition-all active:scale-[0.98]"
-        >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-            <span className="relative text-lg tracking-wide">Começar Agora</span>
-        </button>
-
-        <p className="mt-8 text-center text-sm font-medium text-slate-500">
-            Já tem uma conta? <button onClick={() => navigate('/login')} className="text-white hover:text-primary transition-colors underline-offset-4 font-bold">Fazer Login</button>
-        </p>
+      {/* Footer / Powered By */}
+      <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center justify-center gap-2 opacity-60">
+        <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Powered by</span>
+        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/5 backdrop-blur-md">
+            <span className="material-symbols-outlined text-sm text-secondary">graphic_eq</span>
+            <span className="text-xs font-bold text-white/80">AI Voice Engine</span>
+        </div>
       </div>
-
-      <style>{`
-        @keyframes shimmer {
-            100% { transform: translateX(100%); }
-        }
-      `}</style>
     </div>
   );
 };

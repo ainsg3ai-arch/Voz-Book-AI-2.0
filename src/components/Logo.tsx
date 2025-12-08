@@ -1,39 +1,55 @@
 import React from 'react';
 
-const Logo: React.FC<{ className?: string }> = ({ className = "h-8 w-8" }) => {
+interface LogoProps {
+    className?: string;
+    showText?: boolean;
+}
+
+const Logo: React.FC<LogoProps> = ({ className = "h-8 w-8", showText = false }) => {
   return (
-    <svg 
-      viewBox="0 0 48 48" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <defs>
-        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#3AB8FF" />
-          <stop offset="100%" stopColor="#7C3AED" />
-        </linearGradient>
-        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs>
-      
-      {/* Abstract Book/Wave Shape */}
-      <path 
-        d="M14 12C14 12 14 36 14 36C14 39.3137 16.6863 42 20 42H40V18H20C17.7909 18 16 16.2091 16 14V8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8V32" 
-        stroke="url(#logoGradient)" 
-        strokeWidth="4" 
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-        filter="url(#glow)"
-      />
-      
-      {/* Sound Waves */}
-      <path d="M26 24V36" stroke="white" strokeWidth="2" strokeLinecap="round" className="animate-[pulse_1s_ease-in-out_infinite]" />
-      <path d="M32 20V40" stroke="white" strokeWidth="2" strokeLinecap="round" className="animate-[pulse_1.2s_ease-in-out_infinite]" />
-      <path d="M38 26V34" stroke="white" strokeWidth="2" strokeLinecap="round" className="animate-[pulse_0.8s_ease-in-out_infinite]" />
-    </svg>
+    <div className="flex items-center gap-3 select-none">
+        <svg 
+        viewBox="0 0 48 48" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+        className={className}
+        >
+        <defs>
+            <linearGradient id="sonaraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#00f2fe" />
+            <stop offset="100%" stopColor="#6a5af9" />
+            </linearGradient>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+        </defs>
+        
+        {/* Abstract Sound Wave Shape - Sonara Symbol */}
+        <path 
+            d="M12 24C12 18 16 12 24 12C32 12 36 18 36 24M8 24C8 14 14 6 24 6C34 6 40 14 40 24" 
+            stroke="url(#sonaraGradient)" 
+            strokeWidth="3" 
+            strokeLinecap="round" 
+            className="opacity-40"
+        />
+        
+        <rect x="22" y="14" width="4" height="20" rx="2" fill="url(#sonaraGradient)" filter="url(#glow)" />
+        <rect x="14" y="20" width="4" height="8" rx="2" fill="url(#sonaraGradient)" className="opacity-80" />
+        <rect x="30" y="18" width="4" height="12" rx="2" fill="url(#sonaraGradient)" className="opacity-80" />
+        
+        {/* Pulse Dot */}
+        <circle cx="24" cy="40" r="3" fill="#00f2fe" className="animate-pulse">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
+        </circle>
+        </svg>
+
+        {showText && (
+            <span className="text-xl md:text-2xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70">
+                SONARA
+            </span>
+        )}
+    </div>
   );
 };
 

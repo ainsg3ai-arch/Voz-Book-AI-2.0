@@ -14,15 +14,13 @@ const Home: React.FC = () => {
     <div className="relative w-full min-h-screen">
         {/* Ambient Background Glow */}
         <div className="fixed top-[-20%] left-[-20%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
-        <div className="fixed bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+        <div className="fixed bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
       {/* Header - Mobile Only */}
-      <header className="sticky top-0 z-30 flex md:hidden items-center justify-between px-6 py-4 bg-[#0C1115]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="flex items-center gap-3">
-             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-premium shadow-glow-sm">
-                 <Logo className="h-5 w-5 text-white" />
-             </div>
-             <h1 className="text-lg font-bold tracking-tight text-white">VozBook <span className="text-primary font-light">AI</span></h1>
+      <header className="sticky top-0 z-30 flex md:hidden items-center justify-between px-6 py-4 bg-[#0d1117]/80 backdrop-blur-xl border-b border-white/5">
+        <div className="flex items-center gap-2">
+             <Logo className="h-7 w-7" />
+             <span className="text-lg font-extrabold tracking-wide text-white">SONARA</span>
         </div>
         <button 
           onClick={() => navigate('/settings')} 
@@ -33,19 +31,19 @@ const Home: React.FC = () => {
       </header>
       
       {/* Desktop Header */}
-      <header className="hidden md:flex sticky top-0 z-30 items-center justify-between px-10 py-6 bg-[#0C1115]/80 backdrop-blur-xl border-b border-white/5">
+      <header className="hidden md:flex sticky top-0 z-30 items-center justify-between px-10 py-8 bg-[#0d1117]/90 backdrop-blur-xl border-b border-white/5">
          <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <div>
-                 <h2 className="text-2xl font-bold text-white">Boa tarde</h2>
-                 <p className="text-sm text-white/50">O que vamos ouvir hoje?</p>
+                 <h2 className="text-3xl font-bold text-white tracking-tight">Boa tarde</h2>
+                 <p className="text-sm text-white/50 font-medium mt-1">O que vamos ouvir hoje?</p>
             </div>
              <div className="flex items-center gap-4">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-full glass-panel hover:bg-white/10 transition-colors text-xs font-bold text-white/80">
-                    <span className="material-symbols-outlined text-sm text-primary">premium_quality</span>
+                <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-xs font-bold text-white">
+                    <span className="material-symbols-outlined text-sm text-primary">diamond</span>
                     Premium
                 </button>
-                <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary to-purple-500 p-0.5 cursor-pointer hover:scale-105 transition-transform">
-                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" className="rounded-full h-full w-full border-2 border-[#0C1115]" alt="Profile" />
+                <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary to-secondary p-0.5 cursor-pointer hover:scale-105 transition-transform shadow-glow-sm">
+                    <img src="https://ui-avatars.com/api/?name=User&background=0d1117&color=fff" className="rounded-full h-full w-full border-2 border-[#0d1117]" alt="Profile" />
                 </div>
              </div>
          </div>
@@ -116,8 +114,8 @@ const Home: React.FC = () => {
             <h2 className="text-lg md:text-xl font-bold tracking-wide text-white mb-5">Explorar Categorias</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {['Ficção', 'Negócios', 'Autoajuda', 'História', 'Ciência', 'Tecnologia'].map(category => (
-                    <div key={category} className="flex items-center gap-4 p-4 rounded-2xl glass-panel hover:glass-panel-hover cursor-pointer transition-all group">
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <div key={category} className="flex items-center gap-4 p-4 rounded-2xl glass-panel hover:glass-panel-hover cursor-pointer transition-all group border border-white/5">
+                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                             <span className="material-symbols-outlined text-primary/80 group-hover:text-primary transition-colors">category</span>
                         </div>
                         <span className="font-bold text-sm text-white group-hover:translate-x-1 transition-transform">{category}</span>
