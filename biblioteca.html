@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Biblioteca - VozBook AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#3AB8FF' } } } }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-[#0C1115]/90 backdrop-blur-xl pt-12 pb-4 px-6 border-b border-white/5 flex justify-between items-end">
+        <h1 class="text-3xl font-bold">Biblioteca</h1>
+        <div class="w-10 h-10 rounded-full glass-panel flex items-center justify-center">
+            <span class="material-symbols-outlined text-white/70">search</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-container px-6 pt-6">
+        <!-- Filters -->
+        <div class="flex gap-3 overflow-x-auto no-scrollbar mb-8 pb-2">
+            <button class="px-5 py-2 rounded-full bg-primary text-white text-xs font-bold border border-primary">Tudo</button>
+            <button class="px-5 py-2 rounded-full glass-panel text-white/60 text-xs font-bold whitespace-nowrap">Em progresso</button>
+            <button class="px-5 py-2 rounded-full glass-panel text-white/60 text-xs font-bold">Favoritos</button>
+        </div>
+
+        <!-- Grid -->
+        <div id="book-grid" class="grid grid-cols-2 gap-4 pb-24">
+            <!-- Injetado via JS -->
+        </div>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav h-[80px] flex justify-around items-center px-2">
+        <a href="index.html" class="flex flex-col items-center gap-1 w-16 text-white/40 hover:text-white">
+            <span class="material-symbols-outlined text-2xl">home</span>
+            <span class="text-[10px] font-bold">Início</span>
+        </a>
+        
+        <a href="biblioteca.html" class="flex flex-col items-center gap-1 w-16 text-primary">
+            <span class="material-symbols-outlined text-2xl fill">auto_stories</span>
+            <span class="text-[10px] font-bold">Livros</span>
+        </a>
+
+        <!-- FAB Dummy -->
+        <div class="relative -top-6">
+            <button class="w-14 h-14 rounded-full bg-gradient-premium flex items-center justify-center shadow-glow text-white">
+                <span class="material-symbols-outlined text-3xl">add</span>
+            </button>
+        </div>
+
+        <a href="#" class="flex flex-col items-center gap-1 w-16 text-white/40">
+            <span class="material-symbols-outlined text-2xl">search</span>
+            <span class="text-[10px] font-bold">Buscar</span>
+        </a>
+
+        <a href="#" class="flex flex-col items-center gap-1 w-16 text-white/40">
+            <span class="material-symbols-outlined text-2xl">settings</span>
+            <span class="text-[10px] font-bold">Ajustes</span>
+        </a>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -7,7 +7,7 @@ import Logo from '../components/Logo';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { playBook, currentBook } = usePlayer();
+  const { playBook } = usePlayer();
   const heroBook = BOOKS[0]; 
 
   return (
