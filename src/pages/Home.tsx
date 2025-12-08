@@ -18,8 +18,8 @@ const Home: React.FC = () => {
 
       {/* Header - Mobile Only */}
       <header className="sticky top-0 z-30 flex md:hidden items-center justify-between px-6 py-4 bg-[#0d1117]/80 backdrop-blur-xl border-b border-white/5 transition-all">
-        <div className="flex items-center gap-2">
-             <Logo className="h-7 w-7" />
+        <div className="flex items-center gap-3">
+             <Logo className="h-8 w-8" />
              <span className="text-lg font-extrabold tracking-wide text-white">SONARA</span>
         </div>
         <button 

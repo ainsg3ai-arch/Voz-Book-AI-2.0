@@ -202,7 +202,7 @@ const Player: React.FC = () => {
             <div className="flex items-center justify-between pt-1">
                  <button className="flex items-center gap-2 text-primary/80 hover:text-primary transition-colors group">
                      <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">speaker_group</span>
-                     <span className="text-xs font-bold uppercase tracking-wider">Devices</span>
+                     <span className="text-xs font-bold uppercase tracking-wider">Dispositivos</span>
                  </button>
                  
                  <div className="flex items-center gap-4">
