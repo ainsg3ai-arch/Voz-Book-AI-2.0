@@ -2,11 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  min-height: 100vh;
-  background-color: #0C1115;
+/* Mobile App Optimization & Resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Prevent tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  /* Prevent 'pull-to-refresh' or overscroll bounce effects */
+  overscroll-behavior: none;
+  /* Fix text inflation on mobile */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  /* Use dynamic viewport height for mobile browsers */
+  min-height: 100dvh; 
+  overflow-x: hidden;
+  background-color: #0C1115;
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  
+  /* Disable text selection generally for app-like feel */
+  user-select: none;
+  -webkit-user-select: none;
+  
+  /* Support for iPhone Notch/Home Bar */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+}
+
+:root {
+  font-size: 16px;
+}
+
+/* Allow selection in inputs and text areas */
+input, textarea, [contenteditable] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+img, video, canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  /* Prevent dragging images */
+  -webkit-user-drag: none;
+}
+
+/* Existing Styles */
 .material-symbols-outlined {
   font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
 }

@@ -37,7 +37,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background-dark px-6 py-12 font-display text-white">
+    <div className="flex min-h-[100dvh] w-full flex-col bg-background-dark px-6 py-12 font-display text-white">
       <div className="flex-1 flex flex-col justify-center">
         <h1 className="text-3xl font-bold mb-2">Bem-vindo de volta</h1>
         <p className="text-slate-400 mb-10">Faça login para acessar sua biblioteca.</p>

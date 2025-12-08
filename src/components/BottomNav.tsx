@@ -26,11 +26,12 @@ const BottomNav: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 h-[72px] md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden pb-[env(safe-area-inset-bottom)]">
         {/* Gradient Fade for content behind */}
         <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-[#0C1115] to-transparent pointer-events-none"></div>
         
-        <div className="absolute inset-0 glass-panel border-b-0 rounded-t-3xl flex justify-around items-center px-2">
+        {/* Nav Container - Dynamic Height for Safe Area */}
+        <div className="relative h-[72px] glass-panel border-b-0 rounded-t-3xl flex justify-around items-center px-2 shadow-glass bg-[#0C1115]/80">
             <NavItem path="/home" icon="home" label="Início" />
             <NavItem path="/library" icon="auto_stories" label="Livros" />
             
@@ -47,6 +48,9 @@ const BottomNav: React.FC = () => {
             <NavItem path="/home" icon="search" label="Buscar" /> {/* Search placeholder */}
             <NavItem path="/settings" icon="settings" label="Ajustes" />
         </div>
+        
+        {/* Filler for safe area bottom background */}
+        <div className="h-[env(safe-area-inset-bottom)] bg-[#0C1115]/80 glass-panel border-t-0 -mt-[1px]"></div>
     </div>
   );
 };

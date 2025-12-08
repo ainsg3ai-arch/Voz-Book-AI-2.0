@@ -32,7 +32,7 @@ const VoiceConfig: React.FC = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark font-display text-white">
+    <div className="relative flex min-h-[100dvh] w-full flex-col bg-background-dark font-display text-white">
        {/* Ambient Background */}
        <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none"></div>
 
@@ -99,7 +99,7 @@ const VoiceConfig: React.FC = () => {
       </main>
 
       {/* Footer Actions */}
-      <div className="fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 p-6 pb-8 backdrop-blur-xl z-20 rounded-t-3xl">
+      <div className="fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 p-6 pb-[calc(2rem+env(safe-area-inset-bottom))] backdrop-blur-xl z-20 rounded-t-3xl">
          <div className="flex gap-4">
              <button className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-primary hover:bg-white/10 transition-colors">
                 <span className="material-symbols-outlined fill text-3xl">play_arrow</span>

@@ -47,7 +47,7 @@ const Player: React.FC = () => {
   const isCurrentPlaying = isPlaying && currentBook?.id === displayBook.id;
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-background-dark font-display text-white overflow-hidden">
+    <div className="relative flex h-[100dvh] w-full flex-col bg-background-dark font-display text-white overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/40 z-10"></div>
@@ -86,9 +86,9 @@ const Player: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 flex-1 flex flex-col px-8">
+      <div className="relative z-10 flex-1 flex flex-col px-8 min-h-0">
         
-        <div className="flex-1 flex items-center justify-center py-6 overflow-hidden">
+        <div className="flex-1 flex items-center justify-center py-4 overflow-hidden">
             {!showLyrics ? (
                 // --- VIEW 1: ALBUM ART & VISUALIZER ---
                 <div className={`relative w-full max-w-[340px] aspect-square rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] ring-1 ring-white/10 transition-all duration-700 ease-out animate-[fadeIn_0.5s_ease-out] bg-[#1a232d] ${isCurrentPlaying ? 'scale-100' : 'scale-95'}`}>
@@ -145,7 +145,7 @@ const Player: React.FC = () => {
         </div>
 
         {/* Info Area */}
-        <div className={`flex items-end justify-between mb-8 transition-opacity duration-300 ${showLyrics ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100'}`}>
+        <div className={`flex items-end justify-between mb-6 transition-opacity duration-300 ${showLyrics ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100'}`}>
             <div className="flex-1 min-w-0 mr-6">
                 <h1 className="text-2xl md:text-3xl font-bold leading-tight mb-2 truncate text-white text-shadow-sm">{displayBook.title}</h1>
                 <p className="text-primary text-base md:text-lg font-medium truncate">{displayBook.author}</p>
@@ -156,7 +156,7 @@ const Player: React.FC = () => {
         </div>
 
         {/* Scrubber */}
-        <div className="mb-8 group relative select-none">
+        <div className="mb-6 group relative select-none">
             <div className="relative h-2 w-full rounded-full bg-white/10 cursor-pointer">
                 <div className="absolute inset-0 rounded-full bg-white/10"></div>
                 {chapters.map((pos) => (
@@ -194,7 +194,7 @@ const Player: React.FC = () => {
         </div>
 
         {/* Bottom Tools */}
-        <div className="flex items-center justify-between px-2 pb-8">
+        <div className="flex items-center justify-between px-2 pb-[calc(2rem+env(safe-area-inset-bottom))]">
              <button className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
                  <span className="material-symbols-outlined text-sm">speed</span>
                  1.0x

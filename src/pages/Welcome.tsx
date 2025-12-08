@@ -6,7 +6,7 @@ const Welcome: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-[#0C1115] font-display overflow-hidden selection:bg-primary selection:text-white">
+    <div className="relative flex h-[100dvh] w-full flex-col bg-[#0C1115] font-display overflow-hidden selection:bg-primary selection:text-white">
       
       {/* Background Animated Gradients (Aurora Effect) */}
       <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full animate-pulse-slow"></div>
@@ -44,7 +44,7 @@ const Welcome: React.FC = () => {
       </main>
 
       {/* Bottom Actions */}
-      <div className="relative z-10 w-full p-6 pb-10 animate-[slideUp_0.7s_ease-out]">
+      <div className="relative z-10 w-full p-6 pb-[calc(40px+env(safe-area-inset-bottom))] animate-[slideUp_0.7s_ease-out]">
         <button 
             onClick={() => navigate('/home')}
             className="group relative w-full overflow-hidden rounded-2xl bg-white py-4 font-bold text-[#0C1115] shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all active:scale-[0.98]"

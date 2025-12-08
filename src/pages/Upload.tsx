@@ -63,7 +63,7 @@ const Upload: React.FC = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-dark font-display text-white overflow-hidden">
+    <div className="relative flex min-h-[100dvh] w-full flex-col bg-background-dark font-display text-white overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute top-[-20%] right-[-20%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
 
@@ -79,7 +79,7 @@ const Upload: React.FC = () => {
         <div className="w-10"></div>
       </div>
 
-      <main className="relative z-10 flex-grow px-6 pt-6 pb-20">
+      <main className="relative z-10 flex-grow px-6 pt-6 pb-24">
         
         {/* Toggle */}
         <div className="flex p-1 rounded-2xl glass-panel mb-8 border border-white/5">

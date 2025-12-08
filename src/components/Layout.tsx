@@ -18,7 +18,7 @@ const Layout: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-full bg-background-dark text-white overflow-hidden">
+    <div className="flex h-[100dvh] w-full bg-background-dark text-white overflow-hidden">
       {/* Desktop Sidebar */}
       <Sidebar />
 
@@ -26,10 +26,8 @@ const Layout: React.FC = () => {
       <div className="relative flex-1 flex flex-col h-full overflow-hidden">
         
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth">
+        <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-24">
              <Outlet />
-             {/* Spacer for bottom nav/player */}
-             <div className="h-32 md:h-24"></div>
         </div>
 
         {/* Floating Elements */}
