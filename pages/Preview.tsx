@@ -126,7 +126,7 @@ const Preview: React.FC = () => {
       {/* FAB to Record/Voice Config */}
       <div className="fixed bottom-8 right-6 z-20">
         <button 
-          onClick={() => navigate('/voice-config')}
+          onClick={() => navigate('/voice-config', { state: { filePath, fileName: fileNameParam } })}
           className="group flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-premium shadow-glow hover:scale-110 active:scale-95 transition-all"
         >
           <span className="material-symbols-outlined text-3xl text-white fill group-hover:animate-pulse">mic</span>

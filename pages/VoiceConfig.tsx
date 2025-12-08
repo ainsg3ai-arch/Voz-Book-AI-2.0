@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Emotion } from '../types';
 
 const VoiceConfig: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { filePath, fileName } = location.state || {};
+
   const [voiceType, setVoiceType] = useState('Masculina');
   const [emotion, setEmotion] = useState<Emotion>('Neutro');
   
@@ -21,7 +24,9 @@ const VoiceConfig: React.FC = () => {
         state: { 
             voiceName, 
             speed: 0.5 + (speed / 100) * 1.5, // Map 0-100 to 0.5-2.0
-            emotion 
+            emotion,
+            filePath,
+            fileName
         } 
     });
   };

@@ -81,7 +81,7 @@ const Conversion: React.FC = () => {
   const processingRef = useRef(false);
 
   // Recupera configurações passadas pela tela anterior
-  const { voiceName = 'Fenrir', speed = 1, emotion = 'Neutro' } = location.state || {};
+  const { voiceName = 'Fenrir', speed = 1, emotion = 'Neutro', filePath, fileName } = location.state || {};
 
   useEffect(() => {
     if (processingRef.current) return;
@@ -90,9 +90,10 @@ const Conversion: React.FC = () => {
     const generateAudiobook = async () => {
         try {
             // 1. Configuração do Texto (Simulado para este exemplo, mas poderia vir do PDF lido)
+            // Em uma app real, usaríamos o `filePath` para baixar o PDF e extrair texto.
             const textToRead = "A estratégia sem tática é o caminho mais lento para a vitória. Tática sem estratégia é o ruído antes da derrota. Se você conhece o inimigo e conhece a si mesmo, não precisa temer o resultado de cem batalhas.";
             
-            setStatus('Gerando áudio neural (Gemini)...');
+            setStatus(`Lendo arquivo: ${fileName || 'Documento'}...`);
             setProgress(10);
 
             // 2. Chamar Gemini API
@@ -107,6 +108,8 @@ const Conversion: React.FC = () => {
                 setProgress(p => Math.min(p + 1, 80));
             }, 100);
 
+            setStatus('Gerando áudio neural (Gemini)...');
+            
             const response = await ai.models.generateContent({
                 model: "gemini-2.5-flash-preview-tts",
                 contents: {
@@ -138,18 +141,20 @@ const Conversion: React.FC = () => {
             
             // 4. Upload para Supabase (Se configurado)
             if (isBackendActive()) {
-                const filename = `audiobook-${Date.now()}.wav`;
+                const audioFilename = `audiobook-${Date.now()}.wav`;
                 
                 // Upload Storage
                 const { data: storageData, error: uploadError } = await supabase.storage
                     .from('audios') // Certifique-se de criar este bucket no painel do Supabase
-                    .upload(filename, wavBlob, { contentType: 'audio/wav' });
+                    .upload(audioFilename, wavBlob, { contentType: 'audio/wav' });
 
                 if (uploadError) throw uploadError;
 
                 // Insert Metadata
+                // Se houver um filePath original, poderíamos linkar. Aqui salvamos na tabela audios.
                 const { error: dbError } = await supabase.from('audios').insert({
-                    filename: filename,
+                    filename: audioFilename,
+                    original_file: fileName || 'unknown',
                     path: storageData.path,
                     voice: voiceName,
                     emotion: emotion,
@@ -159,8 +164,6 @@ const Conversion: React.FC = () => {
                 if (dbError) console.warn("Erro ao salvar metadados:", dbError);
             } else {
                 console.warn("Backend inativo. Pulando upload (Modo Demo).");
-                // Em modo demo, poderíamos criar uma URL de objeto local para tocar
-                // const localUrl = URL.createObjectURL(wavBlob);
             }
 
             setProgress(100);
@@ -168,7 +171,7 @@ const Conversion: React.FC = () => {
 
             // 5. Redirecionar
             setTimeout(() => {
-                navigate('/player/1'); // Redireciona para o player (no futuro passaria o ID do novo audio)
+                navigate('/player/1'); // Redireciona para o player
             }, 800);
 
         } catch (error: any) {
@@ -179,7 +182,7 @@ const Conversion: React.FC = () => {
     };
 
     generateAudiobook();
-  }, [navigate, voiceName, speed, emotion]);
+  }, [navigate, voiceName, speed, emotion, filePath, fileName]);
 
   return (
     <div className="relative flex h-screen w-full flex-col bg-background-dark font-display text-white overflow-hidden">
@@ -209,7 +212,7 @@ const Conversion: React.FC = () => {
             </div>
         </div>
 
-        <h2 className="text-2xl font-bold leading-tight px-4 pb-2 text-white">Relatório Anual 2024</h2>
+        <h2 className="text-2xl font-bold leading-tight px-4 pb-2 text-white">{fileName || 'Relatório Anual 2024'}</h2>
         <p className="text-primary font-medium text-sm mb-12 animate-pulse">{status}</p>
 
         <div className="w-full max-w-sm px-4">
