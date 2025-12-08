@@ -1,14 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-// No Vite, usamos import.meta.env para acessar variáveis de ambiente.
-// As variáveis devem começar com VITE_ para serem expostas ao cliente.
-// Fix: Cast import.meta to any to resolve TS error 'Property env does not exist on type ImportMeta'
-const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY || '';
+// Usamos ImportMeta para tipar corretamente (TS)
+const env = (import.meta as any).env;
 
+// Adicionamos valores de fallback para evitar que a aplicação quebre (White Screen) 
+// se as chaves não estiverem configuradas no .env.local
+const supabaseUrl = env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || '';
+
+// Se as chaves estiverem vazias, o cliente Supabase ainda é criado, mas falhará em chamadas de rede.
+// A função isBackendActive() deve ser usada para verificar isso antes de tentar operações.
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Helper para verificar se o backend está ativo
-export const isBackendActive = () => {
-    return supabaseUrl !== '' && supabaseAnonKey !== '';
+// Helper para verificar se o backend está realmente ativo
+export const isBackendActive = (): boolean => {
+    return !!supabaseUrl && !!supabaseAnonKey && supabaseUrl !== '' && supabaseAnonKey !== '';
 };
