@@ -17,14 +17,14 @@ const Home: React.FC = () => {
         <div className="fixed bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-secondary/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
       {/* Header - Mobile Only */}
-      <header className="sticky top-0 z-30 flex md:hidden items-center justify-between px-6 py-4 bg-[#0d1117]/80 backdrop-blur-xl border-b border-white/5">
+      <header className="sticky top-0 z-30 flex md:hidden items-center justify-between px-6 py-4 bg-[#0d1117]/80 backdrop-blur-xl border-b border-white/5 transition-all">
         <div className="flex items-center gap-2">
              <Logo className="h-7 w-7" />
              <span className="text-lg font-extrabold tracking-wide text-white">SONARA</span>
         </div>
         <button 
           onClick={() => navigate('/settings')} 
-          className="h-10 w-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors"
+          className="h-10 w-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors active:scale-95"
         >
              <span className="material-symbols-outlined text-white/80">manage_accounts</span>
         </button>
@@ -49,7 +49,7 @@ const Home: React.FC = () => {
          </div>
       </header>
 
-      <main className="relative z-10 flex flex-col gap-10 pt-6 pb-20 md:px-10 max-w-7xl mx-auto w-full">
+      <main className="relative z-10 flex flex-col gap-10 pt-6 pb-24 md:px-10 max-w-7xl mx-auto w-full">
         
         {/* Continue Listening (Hero) */}
         <section className="px-6 md:px-0">

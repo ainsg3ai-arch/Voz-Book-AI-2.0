@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Usamos ImportMeta para tipar corretamente (TS)
-const env = (import.meta as any).env;
+// Usamos ImportMeta para tipar corretamente (TS) e evitar erros de build
+const env = (import.meta as any).env || {};
 
 // Adicionamos valores de fallback para evitar que a aplicação quebre (White Screen) 
 // se as chaves não estiverem configuradas no .env.local
@@ -12,7 +12,7 @@ const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || '';
 // A função isBackendActive() deve ser usada para verificar isso antes de tentar operações.
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Helper para verificar se o backend está realmente ativo
+// Helper para verificar se o backend está realmente ativo e configurado
 export const isBackendActive = (): boolean => {
     return !!supabaseUrl && !!supabaseAnonKey && supabaseUrl !== '' && supabaseAnonKey !== '';
 };
