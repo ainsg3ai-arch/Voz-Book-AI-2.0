@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Book } from '../types';
 
 interface BookCardProps {
@@ -9,6 +9,26 @@ interface BookCardProps {
 }
 
 const BookCard: React.FC<BookCardProps> = ({ book, variant = 'portrait', onClick, showProgress = false }) => {
+  const [imgError, setImgError] = useState(false);
+
+  // Fallback for missing/broken images
+  const CoverImage = ({ className, opacity = "" }: { className: string, opacity?: string }) => {
+    if (imgError) {
+      return (
+        <div className={`${className} bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center`}>
+           <span className="material-symbols-outlined text-white/20 text-4xl">broken_image</span>
+        </div>
+      );
+    }
+    return (
+      <img 
+        src={book.cover} 
+        className={`${className} ${opacity}`} 
+        alt={book.title}
+        onError={() => setImgError(true)} 
+      />
+    );
+  };
   
   if (variant === 'hero') {
     return (
@@ -16,7 +36,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, variant = 'portrait', onClick
         className="relative w-full aspect-[4/3] md:aspect-[3/1] rounded-3xl overflow-hidden cursor-pointer group shadow-2xl ring-1 ring-white/10"
         onClick={onClick}
       >
-        <img src={book.cover} className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" alt="Cover" />
+        <CoverImage className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" opacity="opacity-70" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0C1115] via-[#0C1115]/40 to-transparent"></div>
         
         <div className="absolute bottom-0 left-0 p-6 w-full">
@@ -49,7 +69,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, variant = 'portrait', onClick
           className="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors cursor-pointer group"
       >
            <div className="relative h-16 w-16 shrink-0 rounded-xl overflow-hidden shadow-lg">
-                <img src={book.cover} className="h-full w-full object-cover" alt={book.title} />
+                <CoverImage className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
            </div>
            <div className="flex-1 min-w-0">
@@ -70,11 +90,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, variant = 'portrait', onClick
         onClick={onClick}
     >
         <div className="relative aspect-[2/3] w-full rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/5 bg-surface-dark mb-3">
-            <img 
-            src={book.cover} 
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100" 
-            alt={book.title} 
-            />
+            <CoverImage className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
             
             {/* Play Overlay */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">

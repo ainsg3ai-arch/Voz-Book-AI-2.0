@@ -3,11 +3,11 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import BottomNav from './BottomNav';
 import MiniPlayer from './MiniPlayer';
-import { BOOKS } from '../constants'; // Mock context
+import { usePlayer } from '../contexts/PlayerContext';
 
 const Layout: React.FC = () => {
   const location = useLocation();
-  const currentBook = BOOKS[0]; // Logic to get current book from context/store
+  const { currentBook } = usePlayer();
 
   // Hide nav/player on full screen pages
   const isFullScreen = location.pathname.includes('/player') || location.pathname === '/welcome';
@@ -34,7 +34,7 @@ const Layout: React.FC = () => {
 
         {/* Floating Elements */}
         {showMiniPlayer && (
-            <div className="absolute bottom-0 w-full pointer-events-none">
+            <div className="absolute bottom-0 w-full pointer-events-none z-50">
                 {/* On mobile, MiniPlayer is above BottomNav. On Desktop, it's at bottom. */}
                 <div className="pointer-events-auto">
                      <MiniPlayer currentBook={currentBook} />

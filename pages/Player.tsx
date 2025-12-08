@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BOOKS } from '../constants';
+import { usePlayer } from '../contexts/PlayerContext';
 
 const Player: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const book = BOOKS.find(b => b.id === id) || BOOKS[0];
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { currentBook, isPlaying, playBook, togglePlay, nextTrack, prevTrack } = usePlayer();
+  
+  // Local state for UI only
   const [volume, setVolume] = useState(80);
-  const [showLyrics, setShowLyrics] = useState(false); // State for Reading Mode
+  const [showLyrics, setShowLyrics] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  
+  // Find book from URL or fallback to context
+  const displayBook = BOOKS.find(b => b.id === id) || currentBook || BOOKS[0];
 
-  // Mock chapter positions (percentages)
+  // Sync context if URL changes
+  useEffect(() => {
+      if (displayBook && currentBook?.id !== displayBook.id) {
+          // Optional: Auto-play when entering page
+          // playBook(displayBook); 
+      }
+      setImgError(false); // Reset error state on book change
+  }, [id, displayBook]);
+
   const chapters = [15, 35, 60, 85];
-
-  // Mock text content for the Reading Mode
   const bookContent = [
     "A estratégia sem tática é o caminho mais lento para a vitória. Tática sem estratégia é o ruído antes da derrota.",
     "Se você conhece o inimigo e conhece a si mesmo, não precisa temer o resultado de cem batalhas.",
@@ -24,20 +36,34 @@ const Player: React.FC = () => {
     "Quem se destaca na defesa esconde-se nas profundezas da terra; quem se destaca no ataque move-se nas alturas do céu."
   ];
 
+  const handlePlayToggle = () => {
+      if (currentBook?.id !== displayBook.id) {
+          playBook(displayBook);
+      } else {
+          togglePlay();
+      }
+  };
+
+  const isCurrentPlaying = isPlaying && currentBook?.id === displayBook.id;
+
   return (
     <div className="relative flex h-screen w-full flex-col bg-background-dark font-display text-white overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/40 z-10"></div>
-          <div 
-            className="absolute inset-0 opacity-40 blur-[100px] scale-150 transition-opacity duration-700"
-            style={{ 
-                backgroundImage: `url("${book.cover}")`,
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                opacity: showLyrics ? 0.2 : 0.4
-            }}
-          ></div>
+          {imgError ? (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-900/20 z-0"></div>
+          ) : (
+            <div 
+                className="absolute inset-0 opacity-40 blur-[100px] scale-150 transition-opacity duration-700"
+                style={{ 
+                    backgroundImage: `url("${displayBook.cover}")`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    opacity: showLyrics ? 0.2 : 0.4
+                }}
+            ></div>
+          )}
       </div>
 
       {/* Top Bar */}
@@ -59,21 +85,28 @@ const Player: React.FC = () => {
         </button>
       </div>
 
-      {/* Main Content Area - Toggle between Cover and Lyrics */}
+      {/* Main Content Area */}
       <div className="relative z-10 flex-1 flex flex-col px-8">
         
         <div className="flex-1 flex items-center justify-center py-6 overflow-hidden">
             {!showLyrics ? (
                 // --- VIEW 1: ALBUM ART & VISUALIZER ---
-                <div className={`relative w-full max-w-[340px] aspect-square rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] ring-1 ring-white/10 transition-all duration-700 ease-out animate-[fadeIn_0.5s_ease-out] ${isPlaying ? 'scale-100' : 'scale-95'}`}>
-                    <img 
-                        src={book.cover} 
-                        className="h-full w-full rounded-3xl object-cover" 
-                        alt="Cover" 
-                    />
+                <div className={`relative w-full max-w-[340px] aspect-square rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] ring-1 ring-white/10 transition-all duration-700 ease-out animate-[fadeIn_0.5s_ease-out] bg-[#1a232d] ${isCurrentPlaying ? 'scale-100' : 'scale-95'}`}>
+                    {imgError ? (
+                        <div className="h-full w-full rounded-3xl bg-gradient-to-br from-gray-800 to-black flex items-center justify-center">
+                             <span className="material-symbols-outlined text-white/10 text-8xl">album</span>
+                        </div>
+                    ) : (
+                        <img 
+                            src={displayBook.cover} 
+                            className="h-full w-full rounded-3xl object-cover" 
+                            alt="Cover" 
+                            onError={() => setImgError(true)}
+                        />
+                    )}
                     
                     {/* Visualizer Overlay */}
-                    {isPlaying && (
+                    {isCurrentPlaying && (
                         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent rounded-b-3xl flex items-end justify-center gap-1.5 pb-6 px-8">
                             {[...Array(16)].map((_, i) => (
                                 <div 
@@ -111,11 +144,11 @@ const Player: React.FC = () => {
             )}
         </div>
 
-        {/* Info Area (Hide in Lyrics mode to save space on mobile, or keep distinct) */}
+        {/* Info Area */}
         <div className={`flex items-end justify-between mb-8 transition-opacity duration-300 ${showLyrics ? 'opacity-0 h-0 overflow-hidden mb-0' : 'opacity-100'}`}>
             <div className="flex-1 min-w-0 mr-6">
-                <h1 className="text-2xl md:text-3xl font-bold leading-tight mb-2 truncate text-white text-shadow-sm">{book.title}</h1>
-                <p className="text-primary text-base md:text-lg font-medium truncate">{book.author}</p>
+                <h1 className="text-2xl md:text-3xl font-bold leading-tight mb-2 truncate text-white text-shadow-sm">{displayBook.title}</h1>
+                <p className="text-primary text-base md:text-lg font-medium truncate">{displayBook.author}</p>
             </div>
             <button className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full glass-panel text-white/50 hover:text-red-500 hover:bg-white/10 transition-colors">
                 <span className="material-symbols-outlined text-2xl fill-current">favorite</span>
@@ -134,7 +167,7 @@ const Player: React.FC = () => {
             </div>
             <div className="flex justify-between mt-3 text-xs font-bold text-white/40 font-mono tracking-wide">
                 <span>12:45</span>
-                <span>-{book.duration}</span>
+                <span>-{displayBook.duration}</span>
             </div>
         </div>
 
@@ -143,31 +176,30 @@ const Player: React.FC = () => {
             <button className="text-white/40 hover:text-white transition-colors p-2">
                 <span className="material-symbols-outlined text-2xl">shuffle</span>
             </button>
-            <button className="text-white hover:text-primary transition-colors hover:scale-110 active:scale-95">
-                <span className="material-symbols-outlined text-4xl font-light">replay_10</span>
+            <button onClick={prevTrack} className="text-white hover:text-primary transition-colors hover:scale-110 active:scale-95">
+                <span className="material-symbols-outlined text-4xl font-light">skip_previous</span>
             </button>
             <button 
-                onClick={() => setIsPlaying(!isPlaying)}
+                onClick={handlePlayToggle}
                 className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-premium text-white shadow-glow hover:scale-105 active:scale-95 transition-all"
             >
-                <span className="material-symbols-outlined text-5xl fill">{isPlaying ? 'pause' : 'play_arrow'}</span>
+                <span className="material-symbols-outlined text-5xl fill">{isCurrentPlaying ? 'pause' : 'play_arrow'}</span>
             </button>
-            <button className="text-white hover:text-primary transition-colors hover:scale-110 active:scale-95">
-                <span className="material-symbols-outlined text-4xl font-light">forward_30</span>
+            <button onClick={nextTrack} className="text-white hover:text-primary transition-colors hover:scale-110 active:scale-95">
+                <span className="material-symbols-outlined text-4xl font-light">skip_next</span>
             </button>
             <button className="text-white/40 hover:text-white transition-colors p-2">
                 <span className="material-symbols-outlined text-2xl">bedtime</span>
             </button>
         </div>
 
-        {/* Bottom Tools - Updated with Reading Mode Toggle */}
+        {/* Bottom Tools */}
         <div className="flex items-center justify-between px-2 pb-8">
              <button className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors">
                  <span className="material-symbols-outlined text-sm">speed</span>
                  1.0x
              </button>
 
-             {/* Volume Slider - Hidden on small mobile screens if Lyrics active to prevent clutter */}
              <div className={`flex items-center gap-3 w-1/2 ${showLyrics ? 'hidden md:flex' : 'flex'}`}>
                  <span className="material-symbols-outlined text-xs text-white/40">volume_down</span>
                  <input 
@@ -180,7 +212,6 @@ const Player: React.FC = () => {
                  <span className="material-symbols-outlined text-xs text-white/40">volume_up</span>
              </div>
 
-            {/* Toggle Reading Mode Button */}
              <button 
                 onClick={() => setShowLyrics(!showLyrics)}
                 className={`flex items-center gap-2 text-xs font-bold transition-colors px-3 py-1.5 rounded-lg border ${
@@ -197,7 +228,6 @@ const Player: React.FC = () => {
         </div>
       </div>
       
-      {/* CSS for Fade Mask on Lyrics */}
       <style>{`
         .mask-gradient {
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);

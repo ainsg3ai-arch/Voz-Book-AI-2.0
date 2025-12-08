@@ -1,10 +1,66 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const Upload: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [mode, setMode] = useState<'file' | 'text'>(searchParams.get('mode') === 'text' ? 'text' : 'file');
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+
+    const file = event.target.files[0];
+    setUploading(true);
+
+    try {
+        // 1. Verificar Sessão (Opcional, mas recomendado para RLS)
+        const { data: { session } } = await supabase.auth.getSession();
+
+        // 2. Upload para o Bucket 'pdfs'
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { data: storageData, error: uploadError } = await supabase.storage
+            .from('pdfs')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+
+        if (uploadError) throw uploadError;
+
+        // 3. Salvar metadados na tabela 'files'
+        const { error: dbError } = await supabase
+            .from('files')
+            .insert([
+                { 
+                    user_id: session?.user?.id || null, // Nulo se não logado/modo demo
+                    filename: file.name,
+                    path: storageData.path,
+                    size: file.size,
+                    mime_type: file.type
+                }
+            ]);
+
+        if (dbError) {
+            console.error('Erro ao salvar metadados:', dbError);
+        }
+
+        // Sucesso: Redireciona para Preview passando os dados via Query Params
+        navigate(`/preview?path=${encodeURIComponent(storageData.path)}&filename=${encodeURIComponent(file.name)}`);
+
+    } catch (error: any) {
+        console.error('Erro no upload:', error);
+        alert('Falha no upload: ' + (error.message || 'Erro desconhecido'));
+    } finally {
+        setUploading(false);
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-dark font-display text-white overflow-hidden">
@@ -43,18 +99,34 @@ const Upload: React.FC = () => {
 
         {mode === 'file' ? (
              <div className="flex flex-col animate-[fadeIn_0.3s_ease-out]">
-                <div className="flex flex-col items-center gap-6 rounded-3xl border-2 border-dashed border-white/10 px-6 py-16 bg-white/[0.02] hover:bg-white/5 hover:border-primary/50 transition-all cursor-pointer group">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary shadow-glow-sm group-hover:scale-110 transition-transform">
-                        <span className="material-symbols-outlined text-4xl">cloud_upload</span>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-lg font-bold text-white mb-2">Arraste e solte</p>
-                        <p className="text-sm text-white/40">PDF, DOCX, EPUB ou TXT</p>
-                    </div>
-                    <label className="cursor-pointer rounded-full bg-primary px-8 py-3 font-bold text-white shadow-glow hover:brightness-110 active:scale-95 transition-all">
-                        Escolher Arquivo
-                        <input type="file" className="hidden" onChange={() => navigate('/preview')} />
-                    </label>
+                <div className={`relative flex flex-col items-center gap-6 rounded-3xl border-2 border-dashed px-6 py-16 transition-all cursor-pointer group ${uploading ? 'border-primary/50 bg-primary/10 cursor-wait' : 'border-white/10 bg-white/[0.02] hover:bg-white/5 hover:border-primary/50'}`}>
+                    
+                    {uploading ? (
+                         <div className="flex flex-col items-center">
+                            <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin mb-4"></div>
+                            <p className="text-lg font-bold text-white">Enviando...</p>
+                         </div>
+                    ) : (
+                        <>
+                            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary shadow-glow-sm group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-4xl">cloud_upload</span>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-lg font-bold text-white mb-2">Arraste e solte</p>
+                                <p className="text-sm text-white/40">PDF, DOCX, EPUB ou TXT</p>
+                            </div>
+                            <label className="cursor-pointer rounded-full bg-primary px-8 py-3 font-bold text-white shadow-glow hover:brightness-110 active:scale-95 transition-all">
+                                Escolher Arquivo
+                                <input 
+                                    type="file" 
+                                    className="hidden" 
+                                    onChange={handleFileUpload}
+                                    accept=".pdf,.docx,.epub,.txt"
+                                    disabled={uploading}
+                                />
+                            </label>
+                        </>
+                    )}
                 </div>
                 
                 <div className="mt-8">

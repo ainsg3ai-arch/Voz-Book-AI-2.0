@@ -2,10 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BOOKS, RECENTLY_ADDED } from '../constants';
 import BookCard from '../components/BookCard';
+import { usePlayer } from '../contexts/PlayerContext';
+import Logo from '../components/Logo';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const currentBook = BOOKS[0]; 
+  const { playBook, currentBook } = usePlayer();
+  const heroBook = BOOKS[0]; 
 
   return (
     <div className="relative w-full pb-8">
@@ -17,7 +20,7 @@ const Home: React.FC = () => {
       <header className="sticky top-0 z-20 flex md:hidden items-center justify-between p-6 bg-[#0C1115]/80 backdrop-blur-md">
         <div className="flex items-center gap-3">
              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-premium shadow-glow-sm">
-                 <span className="material-symbols-outlined text-white">graphic_eq</span>
+                 <Logo className="h-6 w-6 text-white" />
              </div>
              <h1 className="text-xl font-bold tracking-tight">VozBook <span className="text-primary font-light">AI</span></h1>
         </div>
@@ -51,9 +54,12 @@ const Home: React.FC = () => {
                 <h2 className="text-lg font-bold tracking-wide">Continuar ouvindo</h2>
              </div>
              <BookCard 
-                book={currentBook} 
+                book={heroBook} 
                 variant="hero" 
-                onClick={() => navigate(`/player/${currentBook.id}`)} 
+                onClick={() => {
+                    playBook(heroBook);
+                    navigate(`/player/${heroBook.id}`);
+                }} 
             />
         </section>
 
@@ -69,7 +75,10 @@ const Home: React.FC = () => {
                     <div key={book.id} className="w-[140px] shrink-0">
                         <BookCard 
                             book={book} 
-                            onClick={() => navigate(`/player/${book.id}`)}
+                            onClick={() => {
+                                playBook(book);
+                                navigate(`/player/${book.id}`);
+                            }}
                         />
                     </div>
                 ))}
@@ -87,14 +96,17 @@ const Home: React.FC = () => {
                     <div key={book.id} className="w-[140px] shrink-0">
                         <BookCard 
                             book={book} 
-                            onClick={() => navigate(`/player/${book.id}`)}
+                            onClick={() => {
+                                playBook(book);
+                                navigate(`/player/${book.id}`);
+                            }}
                         />
                     </div>
                 ))}
             </div>
         </section>
 
-        {/* Featured / Categories Rows (Spotify Style) */}
+        {/* Featured / Categories Rows */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-6 md:px-0">
             {['Ficção', 'Negócios', 'Autoajuda', 'História', 'Ciência', 'Tecnologia'].map(category => (
                 <div key={category} className="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-colors group">
@@ -108,7 +120,7 @@ const Home: React.FC = () => {
 
       </main>
 
-      {/* Floating Action Button for Quick Convert (Mobile Only - Desktop has sidebar) */}
+      {/* Floating Action Button */}
       <div className="md:hidden fixed bottom-24 right-6 z-30">
         <button 
             onClick={() => navigate('/upload')}

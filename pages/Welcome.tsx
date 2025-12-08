@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Logo from '../components/Logo';
 
 const Welcome: React.FC = () => {
   const navigate = useNavigate();
@@ -20,13 +21,7 @@ const Welcome: React.FC = () => {
             
             {/* Main Logo Container */}
             <div className="relative flex h-32 w-32 items-center justify-center rounded-[2rem] bg-gradient-to-br from-[#151e26] to-[#0a0e12] border border-white/10 shadow-2xl ring-1 ring-white/5 group-hover:-translate-y-2 transition-transform duration-500">
-                {/* Book Icon */}
-                <span className="material-symbols-outlined text-5xl text-white opacity-90">auto_stories</span>
-                
-                {/* Sound Wave Overlay Badge */}
-                <div className="absolute -right-3 -top-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-premium shadow-glow border border-white/10">
-                    <span className="material-symbols-outlined text-2xl text-white animate-pulse">graphic_eq</span>
-                </div>
+                <Logo className="h-16 w-16" />
             </div>
         </div>
 

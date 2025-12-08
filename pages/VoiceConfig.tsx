@@ -8,8 +8,23 @@ const VoiceConfig: React.FC = () => {
   const [emotion, setEmotion] = useState<Emotion>('Neutro');
   
   // State for sliders
-  const [speed, setSpeed] = useState(50);
+  const [speed, setSpeed] = useState(50); // 0-100 map to 0.5x - 2.0x
   const [pitch, setPitch] = useState(50);
+
+  const handleGenerate = () => {
+    // Mapeia a seleção de UI para nomes de vozes do Gemini
+    let voiceName = 'Fenrir'; // Default Male
+    if (voiceType === 'Feminina') voiceName = 'Kore';
+    if (voiceType === 'Neutra') voiceName = 'Puck';
+
+    navigate('/conversion', { 
+        state: { 
+            voiceName, 
+            speed: 0.5 + (speed / 100) * 1.5, // Map 0-100 to 0.5-2.0
+            emotion 
+        } 
+    });
+  };
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-dark font-display text-white">
@@ -72,7 +87,7 @@ const VoiceConfig: React.FC = () => {
 
         {/* Sliders */}
         <section className="space-y-6">
-            <Slider label="Velocidade" value={speed} setValue={setSpeed} displayValue="1.0x" icon="speed" />
+            <Slider label="Velocidade" value={speed} setValue={setSpeed} displayValue={`${(0.5 + (speed / 100) * 1.5).toFixed(1)}x`} icon="speed" />
             <Slider label="Tom" value={pitch} setValue={setPitch} displayValue="Médio" icon="graphic_eq" />
         </section>
 
@@ -85,7 +100,7 @@ const VoiceConfig: React.FC = () => {
                 <span className="material-symbols-outlined fill text-3xl">play_arrow</span>
              </button>
              <button 
-                onClick={() => navigate('/conversion')}
+                onClick={handleGenerate}
                 className="flex-1 rounded-2xl bg-gradient-premium font-bold text-white shadow-glow text-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
                 Gerar Audiobook

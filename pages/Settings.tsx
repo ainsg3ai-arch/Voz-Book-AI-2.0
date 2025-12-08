@@ -1,8 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const Settings: React.FC = () => {
     const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        navigate('/login');
+    };
 
     return (
         <div className="relative flex flex-col w-full pb-8">
@@ -31,11 +37,25 @@ const Settings: React.FC = () => {
                     </div>
                 </section>
                 
-                {/* About */}
+                {/* Account Actions */}
                 <section>
+                    <h3 className="text-white/40 text-xs font-bold uppercase tracking-widest px-2 pb-4">Conta</h3>
                      <div className="flex flex-col overflow-hidden rounded-3xl glass-panel border border-white/5">
                         <SettingsItem icon="workspace_premium" label="Assinar Premium" value="Pro" />
-                        <SettingsItem icon="info" label="Sobre o VozBook AI" last />
+                        <SettingsItem icon="info" label="Sobre o VozBook AI" />
+                        
+                        {/* Logout Button */}
+                        <button 
+                            onClick={handleLogout}
+                            className="flex items-center gap-4 p-5 min-h-[72px] justify-between group hover:bg-red-500/10 transition-colors w-full"
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/5 text-white/60 group-hover:text-red-500 group-hover:bg-red-500/10 transition-colors">
+                                    <span className="material-symbols-outlined text-xl">logout</span>
+                                </div>
+                                <p className="text-base font-bold text-left text-white/90 group-hover:text-red-500">Sair da Conta</p>
+                            </div>
+                        </button>
                      </div>
                 </section>
 
@@ -48,7 +68,7 @@ const Settings: React.FC = () => {
 };
 
 const SettingsItem = ({ icon, label, value, last, toggle }: { icon: string; label: string; value?: string; last?: boolean, toggle?: boolean }) => (
-    <button className={`flex items-center gap-4 p-5 min-h-[72px] justify-between group hover:bg-white/5 transition-colors ${!last ? 'border-b border-white/5' : ''}`}>
+    <button className={`flex items-center gap-4 p-5 min-h-[72px] justify-between group hover:bg-white/5 transition-colors w-full ${!last ? 'border-b border-white/5' : ''}`}>
         <div className="flex items-center gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/5 text-white/60 group-hover:text-primary group-hover:bg-primary/10 transition-colors">
                 <span className="material-symbols-outlined text-xl">{icon}</span>

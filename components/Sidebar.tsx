@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Logo from './Logo';
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const Sidebar: React.FC = () => {
         onClick={() => navigate(path)}
         className={`flex w-full items-center gap-4 px-4 py-3 rounded-xl transition-all group ${
           active 
-            ? 'bg-primary/10 text-primary font-bold' 
+            ? 'bg-primary/10 text-primary font-bold shadow-[0_0_15px_rgba(58,184,255,0.1)]' 
             : 'text-white/60 hover:text-white hover:bg-white/5 font-medium'
         }`}
       >
@@ -28,10 +29,8 @@ const Sidebar: React.FC = () => {
     <div className="hidden md:flex flex-col w-64 h-full border-r border-white/5 bg-[#0C1115]">
       {/* Logo */}
       <div className="p-6 pb-8">
-        <div className="flex items-center gap-3">
-             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-premium shadow-glow-sm">
-                 <span className="material-symbols-outlined text-white">graphic_eq</span>
-             </div>
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+             <Logo className="h-10 w-10 text-primary shadow-glow-sm" />
              <h1 className="text-xl font-bold tracking-tight text-white">VozBook <span className="text-primary font-light">AI</span></h1>
         </div>
       </div>

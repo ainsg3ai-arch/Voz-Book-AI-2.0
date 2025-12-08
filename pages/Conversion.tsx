@@ -1,25 +1,185 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { GoogleGenAI, Modality } from "@google/genai";
+import { supabase, isBackendActive } from '../lib/supabase';
+
+// --- Wav Helper Functions ---
+// O modelo TTS retorna PCM bruto. Precisamos encapsular em um container WAV para ser um arquivo de áudio válido.
+const writeString = (view: DataView, offset: number, string: string) => {
+  for (let i = 0; i < string.length; i++) {
+    view.setUint8(offset + i, string.charCodeAt(i));
+  }
+};
+
+const floatTo16BitPCM = (output: DataView, offset: number, input: Float32Array) => {
+  for (let i = 0; i < input.length; i++, offset += 2) {
+    const s = Math.max(-1, Math.min(1, input[i]));
+    output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+  }
+};
+
+const createWavBlob = (samples: Float32Array, sampleRate: number = 24000) => {
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+
+  // RIFF identifier
+  writeString(view, 0, 'RIFF');
+  // RIFF chunk length
+  view.setUint32(4, 36 + samples.length * 2, true);
+  // RIFF type
+  writeString(view, 8, 'WAVE');
+  // format chunk identifier
+  writeString(view, 12, 'fmt ');
+  // format chunk length
+  view.setUint32(16, 16, true);
+  // sample format (raw)
+  view.setUint16(20, 1, true);
+  // channel count
+  view.setUint16(22, 1, true);
+  // sample rate
+  view.setUint32(24, sampleRate, true);
+  // byte rate (sampleRate * blockAlign)
+  view.setUint32(28, sampleRate * 2, true);
+  // block align (channel count * bytes per sample)
+  view.setUint16(32, 2, true);
+  // bits per sample
+  view.setUint16(34, 16, true);
+  // data chunk identifier
+  writeString(view, 36, 'data');
+  // data chunk length
+  view.setUint32(40, samples.length * 2, true);
+
+  floatTo16BitPCM(view, 44, samples);
+
+  return new Blob([view], { type: 'audio/wav' });
+};
+
+// Decodifica base64 para Float32Array (PCM)
+const decodeBase64ToFloat32 = (base64: string): Float32Array => {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  // Assumindo que o modelo envia PCM 16-bit Little Endian, precisamos converter para Float32 para processar ou salvar
+  // Nota: O modelo Gemini TTS retorna PCM raw. O exemplo da doc usa Int16Array para decodificar.
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  const int16 = new Int16Array(bytes.buffer);
+  const float32 = new Float32Array(int16.length);
+  for (let i = 0; i < int16.length; i++) {
+    float32[i] = int16[i] / 32768.0;
+  }
+  return float32;
+};
+// --- End Helper Functions ---
 
 const Conversion: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('Iniciando...');
+  const processingRef = useRef(false);
+
+  // Recupera configurações passadas pela tela anterior
+  const { voiceName = 'Fenrir', speed = 1, emotion = 'Neutro' } = location.state || {};
 
   useEffect(() => {
-    // Simulate conversion progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => navigate('/player/1'), 500); // Go to player for the dummy book
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, 50);
+    if (processingRef.current) return;
+    processingRef.current = true;
 
-    return () => clearInterval(interval);
-  }, [navigate]);
+    const generateAudiobook = async () => {
+        try {
+            // 1. Configuração do Texto (Simulado para este exemplo, mas poderia vir do PDF lido)
+            const textToRead = "A estratégia sem tática é o caminho mais lento para a vitória. Tática sem estratégia é o ruído antes da derrota. Se você conhece o inimigo e conhece a si mesmo, não precisa temer o resultado de cem batalhas.";
+            
+            setStatus('Gerando áudio neural (Gemini)...');
+            setProgress(10);
+
+            // 2. Chamar Gemini API
+            if (!process.env.API_KEY) {
+                throw new Error("API_KEY não configurada no ambiente.");
+            }
+
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            
+            // Simular progresso enquanto a API processa
+            const progressInterval = setInterval(() => {
+                setProgress(p => Math.min(p + 1, 80));
+            }, 100);
+
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash-preview-tts",
+                contents: {
+                    parts: [{ text: textToRead }]
+                },
+                config: {
+                    responseModalities: [Modality.AUDIO],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voiceName },
+                        },
+                    },
+                },
+            });
+
+            clearInterval(progressInterval);
+            setProgress(85);
+            setStatus('Processando áudio...');
+
+            // 3. Processar Resposta
+            const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+            if (!base64Audio) throw new Error("Nenhum áudio retornado pelo modelo.");
+
+            // Converter Base64 -> PCM -> WAV Blob
+            const pcmData = decodeBase64ToFloat32(base64Audio);
+            const wavBlob = createWavBlob(pcmData, 24000); // 24kHz é o padrão do modelo
+
+            setStatus('Salvando na nuvem...');
+            
+            // 4. Upload para Supabase (Se configurado)
+            if (isBackendActive()) {
+                const filename = `audiobook-${Date.now()}.wav`;
+                
+                // Upload Storage
+                const { data: storageData, error: uploadError } = await supabase.storage
+                    .from('audios') // Certifique-se de criar este bucket no painel do Supabase
+                    .upload(filename, wavBlob, { contentType: 'audio/wav' });
+
+                if (uploadError) throw uploadError;
+
+                // Insert Metadata
+                const { error: dbError } = await supabase.from('audios').insert({
+                    filename: filename,
+                    path: storageData.path,
+                    voice: voiceName,
+                    emotion: emotion,
+                    duration: pcmData.length / 24000 // duration in seconds
+                });
+
+                if (dbError) console.warn("Erro ao salvar metadados:", dbError);
+            } else {
+                console.warn("Backend inativo. Pulando upload (Modo Demo).");
+                // Em modo demo, poderíamos criar uma URL de objeto local para tocar
+                // const localUrl = URL.createObjectURL(wavBlob);
+            }
+
+            setProgress(100);
+            setStatus('Concluído!');
+
+            // 5. Redirecionar
+            setTimeout(() => {
+                navigate('/player/1'); // Redireciona para o player (no futuro passaria o ID do novo audio)
+            }, 800);
+
+        } catch (error: any) {
+            console.error(error);
+            setStatus('Erro: ' + error.message);
+            processingRef.current = false;
+        }
+    };
+
+    generateAudiobook();
+  }, [navigate, voiceName, speed, emotion]);
 
   return (
     <div className="relative flex h-screen w-full flex-col bg-background-dark font-display text-white overflow-hidden">
@@ -50,20 +210,20 @@ const Conversion: React.FC = () => {
         </div>
 
         <h2 className="text-2xl font-bold leading-tight px-4 pb-2 text-white">Relatório Anual 2024</h2>
-        <p className="text-primary font-medium text-sm mb-12 animate-pulse">Sintetizando voz neural...</p>
+        <p className="text-primary font-medium text-sm mb-12 animate-pulse">{status}</p>
 
         <div className="w-full max-w-sm px-4">
             <div className="flex justify-between mb-3 text-xs font-bold uppercase tracking-wider">
                 <span className="text-white/60">Progresso</span>
-                <span className="text-white">{progress}%</span>
+                <span className="text-white">{Math.round(progress)}%</span>
             </div>
             <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
                 <div 
-                    className="h-full bg-gradient-premium shadow-[0_0_15px_#3AB8FF] transition-all duration-75 ease-linear rounded-full"
+                    className="h-full bg-gradient-premium shadow-[0_0_15px_#3AB8FF] transition-all duration-300 ease-out rounded-full"
                     style={{ width: `${progress}%` }}
                 ></div>
             </div>
-            <p className="text-white/40 text-xs mt-4 font-medium">Aprox. {Math.max(0, Math.ceil((100 - progress) / 20))} segundos restantes</p>
+            <p className="text-white/40 text-xs mt-4 font-medium">Usando voz: {voiceName}</p>
         </div>
 
         <div className="flex gap-4 mt-12 w-full max-w-sm px-4">
