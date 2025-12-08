@@ -9,11 +9,9 @@ const Preview: React.FC = () => {
   const fileNameParam = searchParams.get('filename');
   
   const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [loadingUrl, setLoadingUrl] = useState(false);
 
   useEffect(() => {
     if (filePath) {
-        setLoadingUrl(true);
         // Exemplo de como gerar URL assinada (privada)
         // Isso permite que o frontend acesse o arquivo se o usuário tiver permissão (RLS)
         const fetchUrl = async () => {
@@ -30,8 +28,6 @@ const Preview: React.FC = () => {
                 }
             } catch (err) {
                 console.error(err);
-            } finally {
-                setLoadingUrl(false);
             }
         };
         fetchUrl();
